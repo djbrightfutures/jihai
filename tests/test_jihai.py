@@ -1,4 +1,4 @@
-"""Keen locks the cascade. No live GLM. No key."""
+"""JiHai locks the cascade. No live GLM. No key."""
 
 import json
 import os
@@ -12,13 +12,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from keen import __version__
-from keen import card as card_mod
-from keen import hands as hands_mod
-from keen import judge
-from keen import laps
-from keen import seat
-from keen.desk import answer, perform, prove
+from jihai import __version__
+from jihai import card as card_mod
+from jihai import hands as hands_mod
+from jihai import judge
+from jihai import laps
+from jihai import seat
+from jihai.desk import answer, perform, prove
 
 
 def _box_ok(test, text):
@@ -32,21 +32,25 @@ def _box_ok(test, text):
     test.assertTrue(all(ord(ch) < 128 for ch in text))
     test.assertNotIn("\x1b", text)
     for line in text.splitlines():
-        if "KEEN" in line and "lap " in line:
+        if "JIHAI" in line and "lap " in line:
             test.assertTrue(line.endswith(" |"), line)
 
 
-class KeenTests(unittest.TestCase):
+class JiHaiTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.home = Path(self.tmp.name)
         self._env = {
             name: os.environ.get(name)
-            for name in ("KEEN_GLM_KEY", "ZHIPU_API_KEY", "KEEN_GLM_URL", "KEEN_FAST_URL", "KEEN_HOME")
+            for name in (
+                "JIHAI_GLM_KEY", "KEEN_GLM_KEY", "ZHIPU_API_KEY",
+                "JIHAI_GLM_URL", "KEEN_GLM_URL", "JIHAI_FAST_URL", "KEEN_FAST_URL",
+                "JIHAI_HOME", "KEEN_HOME",
+            )
         }
         for name in self._env:
             os.environ.pop(name, None)
-        os.environ["KEEN_HOME"] = str(self.home)
+        os.environ["JIHAI_HOME"] = str(self.home)
 
     def tearDown(self):
         for name, value in self._env.items():
@@ -58,10 +62,10 @@ class KeenTests(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_version(self):
-        self.assertEqual(__version__, "1.0.0")
+        self.assertEqual(__version__, "1.1.0")
         code, text = perform(["version"], self.home)
         self.assertEqual(code, 0)
-        self.assertEqual(text, "1.0.0")
+        self.assertEqual(text, "1.1.0")
 
     def test_hostname_is_this_machine(self):
         self.assertEqual(hands_mod.hands("hostname"), socket.gethostname())
@@ -199,8 +203,8 @@ class KeenTests(unittest.TestCase):
 
             return Resp()
 
-        os.environ["KEEN_GLM_URL"] = "http://127.0.0.1:9/v1/chat/completions"
-        os.environ.pop("KEEN_GLM_KEY", None)
+        os.environ["JIHAI_GLM_URL"] = "http://127.0.0.1:9/v1/chat/completions"
+        os.environ.pop("JIHAI_GLM_KEY", None)
         text = seat.live_glm([{"role": "user", "content": "hi"}], opener=opener)
         self.assertEqual(text, "I cannot\nstay")
 
@@ -224,8 +228,14 @@ class KeenTests(unittest.TestCase):
         self.assertEqual(shown, "api.z.ai")
         self.assertNotIn("secret", shown)
 
-    def test_seats_do_not_print_a_key(self):
+    def test_the_old_keen_key_still_counts(self):
         os.environ["KEEN_GLM_KEY"] = "supersecret"
+        text = seat.seats_text()
+        self.assertIn("key", text)
+        self.assertNotIn("supersecret", text)
+
+    def test_seats_do_not_print_a_key(self):
+        os.environ["JIHAI_GLM_KEY"] = "supersecret"
         text = seat.seats_text()
         self.assertIn("key", text)
         self.assertNotIn("supersecret", text)
@@ -292,7 +302,7 @@ class KeenTests(unittest.TestCase):
         self.assertEqual(seat.DEFAULT_URL, "https://api.z.ai/api/paas/v4/chat/completions")
 
     def test_hop_is_slower_than_hands(self):
-        from keen.desk import measured_hop
+        from jihai.desk import measured_hop
         hands_ms, hop_ms = measured_hop(8)
         self.assertGreater(hop_ms, hands_ms)
         self.assertGreater(hands_ms, 0)

@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
-.keen/
+.jihai/
 dist/
 *.egg-info/
 .env

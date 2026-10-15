@@ -19,10 +19,10 @@ _FAST = object()
 
 
 def home_dir() -> Path:
-    raw = (os.environ.get("KEEN_HOME") or "").strip()
+    raw = (os.environ.get("JIHAI_HOME") or os.environ.get("KEEN_HOME") or "").strip()
     if raw:
         return Path(raw)
-    return Path.home() / ".keen"
+    return Path.home() / ".jihai"
 
 
 def _messages(home: Path, ask: str) -> list[dict]:
@@ -78,7 +78,7 @@ def answer(ask: str, home: Path | None = None, *, glm_fn=None, fast_once=_FAST, 
 
 def _write_face(home: Path, text: str) -> None:
     Path(home).mkdir(parents=True, exist_ok=True)
-    (Path(home) / "keen.txt").write_text(text + "\n", encoding="utf-8")
+    (Path(home) / "jihai.txt").write_text(text + "\n", encoding="utf-8")
 
 
 def prove(home: Path) -> dict:
@@ -211,22 +211,22 @@ def face(home: Path) -> str:
 
 def help_text() -> str:
     return (
-        f"Keen {__version__}. The open GLM desk.\n"
+        f"JiHai {__version__}. November 4, 1995. Scorpio. The pig on the year and the day.\n"
         "\n"
-        "  python -m keen hostname\n"
-        "  python -m keen choose yes|no :: ship it\n"
-        "  python -m keen pit\n"
-        "  python -m keen prove\n"
-        "  python -m keen bench\n"
-        "  python -m keen stamp <code>\n"
-        "  python -m keen seats\n"
-        "  python -m keen tail\n"
+        "  python -m jihai hostname\n"
+        "  python -m jihai choose yes|no :: ship it\n"
+        "  python -m jihai pit\n"
+        "  python -m jihai prove\n"
+        "  python -m jihai bench\n"
+        "  python -m jihai stamp <code>\n"
+        "  python -m jihai seats\n"
+        "  python -m jihai tail\n"
         "\n"
         "A fact runs in this process. A choose line takes 3 votes on the fast\n"
         "seat. Unanimous keeps the label. Anything else goes to GLM.\n"
         "GLM's words are stored as they arrived.\n"
-        "The lap file is ~/.keen/laps.jsonl\n"
-        "KEEN_GLM_URL  KEEN_GLM_KEY  KEEN_GLM_MODEL  KEEN_FAST_URL\n"
+        "The lap file is ~/.jihai/laps.jsonl\n"
+        "JIHAI_GLM_URL  JIHAI_GLM_KEY  JIHAI_GLM_MODEL  JIHAI_FAST_URL\n"
         "A key can also live in ZHIPU_API_KEY. It is never written down."
     )
 

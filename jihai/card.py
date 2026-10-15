@@ -50,8 +50,9 @@ def _box(rows: list[str]) -> str:
 def banner() -> str:
     return _box([
         _fit(""),
-        _fit(" KEEN"),
-        _fit(" the open glm desk"),
+        _fit(" JIHAI"),
+        _fit(" november 4, 1995. scorpio."),
+        _fit(" the pig on the year and the day."),
         _fit(" facts run here. a split vote escalates."),
         _fit(" the model's words are not rewritten."),
         _fit(""),
@@ -102,7 +103,7 @@ def card(row: dict) -> str:
     lane = str(row.get("lane") or "").upper()
     proof = str(row.get("proof") or "").upper()
     rows = [
-        _pair("KEEN", f"lap {lap:02d}"),
+        _pair("JIHAI", f"lap {lap:02d}"),
         _pair(lane, proof),
         _fit(""),
         _fit(f" {row.get('ms', 0)} ms"),
@@ -125,7 +126,7 @@ def card(row: dict) -> str:
 
 
 def board(rows: list[dict], seats: str) -> str:
-    body = [_pair("KEEN", "BOARD"), _fit("")]
+    body = [_pair("JIHAI", "BOARD"), _fit("")]
     if not rows:
         body.append(_fit(" no laps yet"))
     for row in rows[-8:]:

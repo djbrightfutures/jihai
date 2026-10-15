@@ -17,16 +17,24 @@ DEFAULT_MODEL = "glm-5.3"
 _LOCAL = {"127.0.0.1", "localhost", "::1"}
 
 
+def _env(*names: str) -> str:
+    for name in names:
+        value = (os.environ.get(name) or "").strip()
+        if value:
+            return value
+    return ""
+
+
 def glm_url() -> str:
-    return (os.environ.get("KEEN_GLM_URL") or DEFAULT_URL).strip()
+    return _env("JIHAI_GLM_URL", "KEEN_GLM_URL") or DEFAULT_URL
 
 
 def glm_key() -> str:
-    return (os.environ.get("KEEN_GLM_KEY") or os.environ.get("ZHIPU_API_KEY") or "").strip()
+    return _env("JIHAI_GLM_KEY", "KEEN_GLM_KEY", "ZHIPU_API_KEY")
 
 
 def glm_model() -> str:
-    return (os.environ.get("KEEN_GLM_MODEL") or DEFAULT_MODEL).strip()
+    return _env("JIHAI_GLM_MODEL", "KEEN_GLM_MODEL") or DEFAULT_MODEL
 
 
 def public_host(url: str) -> str:
@@ -98,12 +106,12 @@ def live_glm(messages: list, opener=None) -> str:
 
 
 def make_fast_once(opener=None):
-    """A fast local seat for votes, or None when KEEN_FAST_URL is unset."""
-    url = (os.environ.get("KEEN_FAST_URL") or "").strip()
+    """A fast local seat for votes, or None when JIHAI_FAST_URL is unset."""
+    url = _env("JIHAI_FAST_URL", "KEEN_FAST_URL")
     if not url:
         return None
-    model = (os.environ.get("KEEN_FAST_MODEL") or "local").strip()
-    key = (os.environ.get("KEEN_FAST_KEY") or "").strip()
+    model = _env("JIHAI_FAST_MODEL", "KEEN_FAST_MODEL") or "local"
+    key = _env("JIHAI_FAST_KEY", "KEEN_FAST_KEY")
 
     def once(text: str, options: list[str]) -> str:
         prompt = (
@@ -133,7 +141,7 @@ def seats_text() -> str:
         glm_light = "key"
     else:
         glm_light = "no key"
-    fast = (os.environ.get("KEEN_FAST_URL") or "").strip()
+    fast = _env("JIHAI_FAST_URL", "KEEN_FAST_URL")
     fast_light = public_host(fast) if fast else "no url"
     return (
         f"glm    {glm_light:<6}  {public_host(url)}\n"

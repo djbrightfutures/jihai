@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.keen/
+dist/
+*.egg-info/
+.env

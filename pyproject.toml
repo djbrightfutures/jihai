@@ -1,0 +1,18 @@
+[project]
+name = "keen"
+version = "1.0.0"
+description = "Keen. Facts run here. A split vote escalates. GLM's words stay."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Christian Rivera" }]
+
+[project.scripts]
+keen = "keen.__main__:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["keen*"]
